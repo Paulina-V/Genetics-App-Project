@@ -290,7 +290,6 @@ public class Screen extends JPanel implements ActionListener {
         System.out.println("in natural selection -- P: " + P + " Q: " + Q);
         //drawAlleles(g);
 
-        numOfAlleles = AAnum + Aanum + aanum;
+        // numOfAlleles = AAnum + Aanum + aanum;
     }
 }
-    
