@@ -21,56 +21,59 @@ public class Screen extends JPanel implements ActionListener {
     private ArrayList<String> popList;
 
     public Screen() throws IOException {
-        
 
         popList = new ArrayList<String>();
-        AA = P*P;
-        Aa = 2*P*Q;
-        aa = Q*Q; 
-        for(double i = 0; i < AA*popSize; i++){
+        AA = P * P;
+        Aa = 2 * P * Q;
+        aa = Q * Q;
+        for (double i = 0; i < AA * popSize; i++) {
             popList.add("AA");
         }
-        for(double i = 0; i < Aa*popSize; i++){
+        for (double i = 0; i < Aa * popSize; i++) {
             popList.add("Aa");
         }
-        for(double i = 0; i < aa*popSize; i++){
+        for (double i = 0; i < aa * popSize; i++) {
             popList.add("aa");
         }
 
         pInput = new JTextField();
         pInput.setBounds(50, 50, 100, 30);
         pInput.setText("0.5");
-   /*     pInput.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                double p = Double.valueOf(pInput.getText());
-                if (p < 0.0) {
-                    p = 0.0;
-                }
-                double q = 1.0 - p;
-                qInput.setText(String.format("%f", q));
-                repaint();
-            }
-        }); */
+        /*
+         * pInput.addMouseListener(new MouseAdapter() {
+         * 
+         * @Override
+         * public void mouseExited(MouseEvent e) {
+         * double p = Double.valueOf(pInput.getText());
+         * if (p < 0.0) {
+         * p = 0.0;
+         * }
+         * double q = 1.0 - p;
+         * qInput.setText(String.format("%f", q));
+         * repaint();
+         * }
+         * });
+         */
         this.add(pInput);
 
         qInput = new JTextField();
         qInput.setBounds(150, 50, 100, 30);
         qInput.setText("0.5");
-   /*     qInput.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                double q = Double.valueOf(qInput.getText());
-                if (q < 0.0) {
-                    q = 0.0;
-                }
-                double p = 1.0 - q;
-                pInput.setText(String.format("%f", p));
-                repaint();
-            }
-        }); */
+        /*
+         * qInput.addMouseListener(new MouseAdapter() {
+         * 
+         * @Override
+         * public void mouseExited(MouseEvent e) {
+         * double q = Double.valueOf(qInput.getText());
+         * if (q < 0.0) {
+         * q = 0.0;
+         * }
+         * double p = 1.0 - q;
+         * pInput.setText(String.format("%f", p));
+         * repaint();
+         * }
+         * });
+         */
         this.add(qInput);
 
         updateButton = new JButton();
@@ -114,14 +117,14 @@ public class Screen extends JPanel implements ActionListener {
         populationInput.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //field.setText("");
-                //repaint();
+                // field.setText("");
+                // repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-            //    if (field.getText().isEmpty())
-            //        field.setText(name);
+                // if (field.getText().isEmpty())
+                // field.setText(name);
             }
         });
         this.add(populationInput);
@@ -147,7 +150,7 @@ public class Screen extends JPanel implements ActionListener {
         g.drawString("P:", 50, 40);
         g.drawString("Q:", 150, 40);
 
-        //updateAlleles();
+        // updateAlleles();
 
         g.drawString("Total population: ", 50, 100);
         g.setColor(Color.red);
@@ -161,8 +164,8 @@ public class Screen extends JPanel implements ActionListener {
         g.setColor(Color.gray);
         g.fillOval(630, 100, 50, 50);
         g.setColor(Color.black);
-        g.drawString("A: " + String.format("%,.0f", P * popSize*2), 560, 130);
-        g.drawString("a: " + String.format("%,.0f", Q * popSize*2), 640, 130);
+        g.drawString("A: " + String.format("%,.0f", P * popSize * 2), 560, 130);
+        g.drawString("a: " + String.format("%,.0f", Q * popSize * 2), 640, 130);
 
         drawAlleles(g);
     }
@@ -179,10 +182,10 @@ public class Screen extends JPanel implements ActionListener {
         if (e.getSource() == killButton) {
 
             naturalSelection(Integer.parseInt(killAAInput.getText()), Integer.parseInt(killAaInput.getText()),
-                Integer.parseInt(killaaInput.getText()));
+                    Integer.parseInt(killaaInput.getText()));
 
         }
-        
+
         repaint();
     }
 
@@ -249,25 +252,22 @@ public class Screen extends JPanel implements ActionListener {
     // Recreates entire population based on current p and q values
     public void updateAlleles() {
 
-        
-        AA = P*P;
-        Aa = 2*P*Q;
-        aa = Q*Q; 
+        AA = P * P;
+        Aa = 2 * P * Q;
+        aa = Q * Q;
 
         popList.clear();
 
-        for(double i = 0; i < AA*popSize; i++){
+        for (double i = 0; i < AA * popSize; i++) {
             popList.add("AA");
         }
-        for(double i = 0; i < Aa*popSize; i++){
+        for (double i = 0; i < Aa * popSize; i++) {
             popList.add("Aa");
         }
-        for(double i = 0; i < aa*popSize; i++){
+        for (double i = 0; i < aa * popSize; i++) {
             popList.add("aa");
         }
-        
 
-        
         pInput.setText(String.format("%,.3f", P));
         qInput.setText(String.format("%,.3f", Q));
     }
@@ -319,12 +319,13 @@ public class Screen extends JPanel implements ActionListener {
         aa = round(aa);
         System.out.println("percents" + AA + " " + Aa + " " + aa);
 
-        P = (final_AA * 2 + final_Aa)/(popSize*2);
-        Q = (final_aa * 2 + final_Aa)/(popSize*2);
-        System.out.println("P: " + P + " Q: " + Q + " sum: " + (P+Q));
+        P = (final_AA * 2 + final_Aa) / (popSize * 2);
+        Q = (final_aa * 2 + final_Aa) / (popSize * 2);
+        System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
         updateAlleles();
     }
-    public double round(double a){
-        return Math.round(a*100.00)/100.00;
+
+    public double round(double a) {
+        return Math.round(a * 100.00) / 100.00;
     }
 }
