@@ -6,25 +6,41 @@ import java.util.*;
 import java.io.*;
 import javax.imageio.ImageIO;
 import java.net.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Screen extends JPanel implements ActionListener {
 
     private JTextField pInput, qInput, killAAInput, killAaInput, killaaInput, populationInput;
-    private double P, Q, AA, Aa, aa;
-    private int numOfAlleles;
+    private double P = 0.5;
+    private double Q = 0.5;
+    private double AA, Aa, aa;
+    private int popSize = 10000;
     private JButton updateButton, killButton, reproduceButton;
     private BufferedImage pool;
-    private ArrayList<String> momList, dadList, populationList;
-    private boolean redrawAlleles = true;
+    private ArrayList<String> popList;
 
     public Screen() throws IOException {
-        setLayout(null);
-        setFocusable(true);
+        
+
+        popList = new ArrayList<String>();
+        AA = P*P;
+        Aa = 2*P*Q;
+        aa = Q*Q; 
+        for(double i = 0; i < AA*popSize; i++){
+            popList.add("AA");
+        }
+        for(double i = 0; i < Aa*popSize; i++){
+            popList.add("Aa");
+        }
+        for(double i = 0; i < aa*popSize; i++){
+            popList.add("aa");
+        }
 
         pInput = new JTextField();
         pInput.setBounds(50, 50, 100, 30);
-        pInput.setText("0.7");
-        pInput.addMouseListener(new MouseAdapter() {
+        pInput.setText("0.5");
+   /*     pInput.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseExited(MouseEvent e) {
@@ -36,13 +52,13 @@ public class Screen extends JPanel implements ActionListener {
                 qInput.setText(String.format("%f", q));
                 repaint();
             }
-        });
+        }); */
         this.add(pInput);
 
         qInput = new JTextField();
         qInput.setBounds(150, 50, 100, 30);
-        qInput.setText("0.3");
-        qInput.addMouseListener(new MouseAdapter() {
+        qInput.setText("0.5");
+   /*     qInput.addMouseListener(new MouseAdapter() {
 
             @Override
             public void mouseExited(MouseEvent e) {
@@ -54,7 +70,7 @@ public class Screen extends JPanel implements ActionListener {
                 pInput.setText(String.format("%f", p));
                 repaint();
             }
-        });
+        }); */
         this.add(qInput);
 
         updateButton = new JButton();
@@ -68,77 +84,51 @@ public class Screen extends JPanel implements ActionListener {
         reproduceButton.setText("REPRODUCE POPULATION");
         this.add(reproduceButton);
         reproduceButton.addActionListener(this);
+        reproduceButton.setVisible(false);
 
         killAAInput = new JTextField();
-        killAAInput.setBounds(50, 800, 100, 30);
+        killAAInput.setBounds(50, 210, 100, 30);
         killAAInput.setText("AA%");
         this.add(killAAInput);
+        killAAInput.setVisible(true);
 
         killAaInput = new JTextField();
-        killAaInput.setBounds(150, 800, 100, 30);
+        killAaInput.setBounds(150, 210, 100, 30);
         killAaInput.setText("Aa%");
         this.add(killAaInput);
 
         killaaInput = new JTextField();
-        killaaInput.setBounds(250, 800, 100, 30);
+        killaaInput.setBounds(250, 210, 100, 30);
         killaaInput.setText("aa%");
         this.add(killaaInput);
 
         killButton = new JButton();
-        killButton.setBounds(350, 800, 280, 30);
+        killButton.setBounds(350, 210, 280, 30);
         killButton.setText("Perform Natral Selection");
         this.add(killButton);
         killButton.addActionListener(this);
 
         populationInput = new JTextField();
-        populationInput.setBounds(170, 100, 100, 30);
-        populationInput.setText("10000");
+        populationInput.setBounds(170, 80, 100, 30);
+        populationInput.setText(popSize + "");
         populationInput.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // field.setText("");
-                // repaint();
+                //field.setText("");
+                //repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                // if (field.getText().isEmpty())
-                // field.setText(name);
+            //    if (field.getText().isEmpty())
+            //        field.setText(name);
             }
         });
         this.add(populationInput);
 
-        P = 0.7;
-        Q = 0.3;
-        numOfAlleles = 20000;
-
-        int countA = (int) ((numOfAlleles / 2) * P);
-        int counta = (int) ((numOfAlleles / 2) * Q);
-        momList = new ArrayList<>();
-        dadList = new ArrayList<>();
-        for (int i = 0; i < countA; i++) {
-            momList.add("A");
-            dadList.add("A");
-        }
-        for (int i = 0; i < counta; i++) {
-            momList.add("a");
-            dadList.add("a");
-        }
-        Collections.shuffle(momList);
-        Collections.shuffle(dadList);
-
-        populationList = new ArrayList<>();
-        for (int i = 0; i < momList.size(); i++) {
-            String allele = momList.get(i) + dadList.get(i);
-            if (allele.equals("aA")) {
-                allele = "Aa";
-            }
-            populationList.add(allele);
-        }
-
         pool = ImageIO.read(new File("pool.jpeg"));
-
-        // repaint();
+        setLayout(null);
+        setFocusable(true);
     }
 
     public Dimension getPreferredSize() {
@@ -157,74 +147,54 @@ public class Screen extends JPanel implements ActionListener {
         g.drawString("P:", 50, 40);
         g.drawString("Q:", 150, 40);
 
-        // updateAlleles();
+        //updateAlleles();
 
         g.drawString("Total population: ", 50, 100);
         g.setColor(Color.red);
-        g.drawString("AA: " + AA, 50, 130);
-        g.drawString("Aa: " + Aa, 50, 160);
+        g.drawString("AA: " + String.format("%,.3f", AA), 50, 130);
+        g.drawString("Aa: " + String.format("%,.3f", Aa), 50, 160);
         g.setColor(Color.black);
-        g.drawString("aa: " + aa, 50, 190);
+        g.drawString("aa: " + String.format("%,.3f", aa), 50, 190);
 
-        g.setColor(Color.gray);
-        g.fillOval(550, 100, 50, 50);
         g.setColor(Color.red);
+        g.fillOval(550, 100, 50, 50);
+        g.setColor(Color.gray);
         g.fillOval(630, 100, 50, 50);
         g.setColor(Color.black);
-        g.drawString("A: " + Math.round(P * numOfAlleles), 560, 130);
-        g.drawString("a: " + Math.round(Q * numOfAlleles), 640, 130);
+        g.drawString("A: " + String.format("%,.0f", P * popSize*2), 560, 130);
+        g.drawString("a: " + String.format("%,.0f", Q * popSize*2), 640, 130);
 
         drawAlleles(g);
     }
 
     public void actionPerformed(ActionEvent e) {
-        updateAlleles();
+
         if (e.getSource() == updateButton) {
             P = Double.valueOf(pInput.getText());
             Q = Double.valueOf(qInput.getText());
 
-            redrawAlleles = true;
-
-            numOfAlleles = Integer.valueOf(populationInput.getText()) * 2;
-
+            popSize = Integer.valueOf(populationInput.getText());
+            updateAlleles();
         }
         if (e.getSource() == killButton) {
 
             naturalSelection(Integer.parseInt(killAAInput.getText()), Integer.parseInt(killAaInput.getText()),
-                    Integer.parseInt(killaaInput.getText()));
+                Integer.parseInt(killaaInput.getText()));
 
         }
-        if (e.getSource() == reproduceButton) {
-            numOfAlleles = 2 * 10000;
-
-        }
+        
         repaint();
     }
 
     public void drawAlleles(Graphics g) {
-        // for (int i=0; i<populationList.size(); i++){
-        // int x = (int)((Math.random()*650) + 50);
-        // int y = (int)((Math.random()*400) + 250);
-        // if (populationList.get(i).equals("aa")){
-        // g.setColor(Color.gray);
-        // } else {
-        // g.setColor(Color.red);
-        // }
-        // g.fillOval(x, y, 50, 50);
-        // g.setColor(Color.black);
-        // g.drawString(populationList.get(i), x+20, y+20);
-        // System.out.println(2);
-        // }
-        // redrawAlleles = false;
-
         int AA_ct = 0;
         int Aa_ct = 0;
-        int aa_ct = 0;
 
-        for (int i = 0; i < populationList.size(); i++) {
-            if (populationList.get(i).equals("aa")) {
+        int aa_ct = 0;
+        for (int i = 0; i < popList.size(); i++) {
+            if (popList.get(i).equals("aa")) {
                 aa_ct++;
-            } else if (populationList.get(i).equals("Aa")) {
+            } else if (popList.get(i).equals("Aa")) {
                 Aa_ct++;
             } else {
                 AA_ct++;
@@ -274,99 +244,87 @@ public class Screen extends JPanel implements ActionListener {
             }
         }
 
-        redrawAlleles = false;
     }
 
+    // Recreates entire population based on current p and q values
     public void updateAlleles() {
-        System.out.println("in update alleles -- P: " + P + " Q: " + Q + " P + Q: " + (P + Q));
-        AA = Math.round(P * P * 100.0) / 100.0;
-        Aa = Math.round(2 * P * Q * 100.0) / 100.0;
-        aa = Math.round(Q * Q * 100.0) / 100.0;
 
-        int countA = (int) ((numOfAlleles / 2) * P);
-        int counta = (int) ((numOfAlleles / 2) * Q);
-        momList = new ArrayList<>();
-        dadList = new ArrayList<>();
-        for (int i = 0; i < countA; i++) {
-            momList.add("A");
-            dadList.add("A");
-        }
-        for (int i = 0; i < counta; i++) {
-            momList.add("a");
-            dadList.add("a");
-        }
-        Collections.shuffle(momList);
-        Collections.shuffle(dadList);
+        
+        AA = P*P;
+        Aa = 2*P*Q;
+        aa = Q*Q; 
 
-        populationList = new ArrayList<>();
-        for (int i = 0; i < momList.size(); i++) {
-            String allele = momList.get(i) + dadList.get(i);
-            if (allele.equals("aA")) {
-                allele = "Aa";
-            }
-            populationList.add(allele);
-        }
+        popList.clear();
 
+        for(double i = 0; i < AA*popSize; i++){
+            popList.add("AA");
+        }
+        for(double i = 0; i < Aa*popSize; i++){
+            popList.add("Aa");
+        }
+        for(double i = 0; i < aa*popSize; i++){
+            popList.add("aa");
+        }
+        
+
+        
+        pInput.setText(String.format("%,.3f", P));
+        qInput.setText(String.format("%,.3f", Q));
     }
 
+    // Repopulates using kill percent of AA, Aa, and aa; population remains constant
     public void naturalSelection(int AA_in, int Aa_in, int aa_in) {
-        System.out.println(AA + ", " + Aa + ", " + aa);
-        double AAdouble = AA_in / 100.0;
-        double Aadouble = Aa_in / 100.0;
-        double aadouble = aa_in / 100.0;
 
-        // System.out.println(AAdouble);
+        double oldPopSize = popSize;
 
-        double AAnum = AA * numOfAlleles / 2 * (1 - AAdouble); // remaining population
-        double Aanum = Aa * numOfAlleles / 2 * (1 - Aadouble);
-        double aanum = aa * numOfAlleles / 2 * (1 - aadouble);
+        // current numbers
+        double current_AA = popSize * AA; // 4900
+        // System.out.println("current AA" + current_AA);
+        double current_Aa = popSize * Aa; // 4200
+        double current_aa = popSize * aa; // 900
+        System.out.println("old " + current_AA + " " + current_Aa + " " + current_aa);
 
-        System.out.println("AAnum = " + (AAnum));
-        System.out.println("Aanum = " + (Aanum));
-        System.out.println("aanum = " + (aanum));
+        // decimal percent of who stays alive
+        double remaining_AA_percent = 1 - AA_in / 100.0; // 0.5
+        // System.out.print("percent" + remaining_AA_percent);
+        double remaining_Aa_percent = 1 - Aa_in / 100.0; // 1
+        double remaining_aa_percent = 1 - aa_in / 100.0; // 1
 
-        numOfAlleles = (int) Math.round(AAnum + Aanum + aanum) * 2;
-        populationInput.setText(Integer.toString(numOfAlleles / 2));
-        AA = AAnum / (numOfAlleles / 2);
-        Aa = Aanum / (numOfAlleles / 2);
-        aa = aanum / (numOfAlleles / 2);
+        // new people - those who will survive the natural selection
+        double new_AA = current_AA * remaining_AA_percent; // 2450
+        double new_Aa = current_Aa * remaining_Aa_percent; // 4200
+        double new_aa = current_aa * remaining_aa_percent; // 900
+        System.out.println("new" + new_AA + " " + new_Aa + " " + new_aa);
 
-        System.out.println(AA + ", " + Aa + ", " + aa + " sum: " + (AA * AA + 2 * AA * aa + aa * aa));
+        // new population
+        popSize = (int) Math.round(new_AA + new_Aa + new_aa); // 7550
+        // System.out.println("population" + new_population);
 
-        P = Math.sqrt(AA);
-        Q = Math.sqrt(aa);
-        double pround = Math.round(P * 100.0) / 100.0;
-        double qround = Math.round(Q * 100.0) / 100.0;
+        // scaling people up to input population
+        double final_AA = new_AA * oldPopSize / popSize; // 3,245.0331125828
+        double final_Aa = new_Aa * oldPopSize / popSize; // 5,562.9139072848
+        double final_aa = new_aa * oldPopSize / popSize; // 1,192.0529801325
+        System.out.println("final" + final_AA + " " + final_Aa + " " + final_aa);
+        popSize = (int) Math.round(final_AA + final_Aa + final_aa); // 7550
 
-        pInput.setText(pround + "");
-        qInput.setText(qround + "");
+        // converting back to int percents
+        // System.out.println(population);
+        AA = final_AA / popSize; // 0.3245033112582781
+        AA = round(AA);
 
-        // System.out.println("in natural selection -- P: " + P + " Q: " + Q + " P + Q:
-        // " + (P + Q));
-        // drawAlleles(g);
+        Aa = final_Aa / popSize; // 0.5562913907284769
+        Aa = round(Aa);
 
-        Double numOfAlleles_d = AAnum + Aanum + aanum;
-        numOfAlleles = (int) Math.round(numOfAlleles_d);
+        aa = final_aa / popSize; // 0.11920529801324503
+        aa = round(aa);
+        System.out.println("percents" + AA + " " + Aa + " " + aa);
+
+        P = (final_AA * 2 + final_Aa)/(popSize*2);
+        Q = (final_aa * 2 + final_Aa)/(popSize*2);
+        System.out.println("P: " + P + " Q: " + Q + " sum: " + (P+Q));
+        updateAlleles();
+    }
+    public double round(double a){
+        return Math.round(a*100.00)/100.00;
     }
 }
-
-/*
- * 
- * 100 AA * 0 = 0
- * 200 Aa * 1 = 200
- * 100 aa * 1 = 100
- * 
- * A: 200
- * a: 400
- * 
- * p = 0.33
- * q = 0.66
- * 
- * AA: p^2 * 400
- * Aa: 2pq
- * aa: q^2
- * 
- * 
- * 
- * 
- */
