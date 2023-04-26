@@ -9,17 +9,21 @@ import javax.imageio.ImageIO;
 public class Screen extends JPanel implements ActionListener {
 
     private JTextField pInput, qInput, killAAInput, killAaInput, killaaInput, populationInput;
-    private JSlider pSlider, qSlider;
-    private double P, Q, AA, Aa, aa;
-    private int popSize = 10000;
     private JButton updateButton, killButton, reproduceButton;
-    private BufferedImage pool;
+    private JSlider pSlider, qSlider;
+
+    private Hashtable<Integer, JLabel> labelTable;
     private ArrayList<String> popList;
 
     private Font f1 = new Font(Font.DIALOG_INPUT, Font.BOLD | Font.ITALIC, 20);
     private Font f2 = new Font(Font.DIALOG, Font.BOLD, 15);
     private Font f3 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
     private Font f4 = new Font(Font.SERIF, Font.PLAIN, 12);
+
+    private BufferedImage pool;
+
+    private double P, Q, AA, Aa, aa;
+    private int popSize = 10000;
 
     public Screen() throws IOException {
 
@@ -38,7 +42,7 @@ public class Screen extends JPanel implements ActionListener {
         }
 
         // set up side panel stuff
-        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable = new Hashtable<Integer, JLabel>();
         labelTable.put(0, new JLabel("0.0"));
         labelTable.put(50, new JLabel("0.5"));
         labelTable.put(100, new JLabel("1.0"));
@@ -47,10 +51,11 @@ public class Screen extends JPanel implements ActionListener {
         pSlider.setLabelTable(labelTable);
         pSlider.setBounds(50, 80, 200, 50);
         pSlider.setMajorTickSpacing(10);
-        pSlider.setMinorTickSpacing(1);
+        pSlider.setMinorTickSpacing(5);
         pSlider.setPaintTicks(true);
         pSlider.setPaintLabels(true);
         pSlider.setFont(f4);
+        pSlider.setSnapToTicks(true);
         pInput = new JTextField();
         pInput.setBounds(50, 130, 200, 30);
         pInput.setText("0.5");
@@ -61,15 +66,19 @@ public class Screen extends JPanel implements ActionListener {
         qSlider.setLabelTable(labelTable);
         qSlider.setBounds(50, 210, 200, 50);
         qSlider.setMajorTickSpacing(10);
-        qSlider.setMinorTickSpacing(1);
+        qSlider.setMinorTickSpacing(5);
         qSlider.setPaintTicks(true);
         qSlider.setPaintLabels(true);
         qSlider.setFont(f4);
+        qSlider.setSnapToTicks(true);
         qInput = new JTextField();
         qInput.setBounds(50, 260, 200, 30);
         qInput.setText("0.5");
         add(qSlider);
         add(qInput);
+
+        P = Double.valueOf(pInput.getText());
+        Q = Double.valueOf(qInput.getText());
 
         populationInput = new JTextField();
         populationInput.setBounds(50, 340, 200, 30);
@@ -117,7 +126,9 @@ public class Screen extends JPanel implements ActionListener {
         super.paintComponent(g);
 
         setUpSidePanel(g);
+        checkPQ();
 
+        repaint();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -202,11 +213,6 @@ public class Screen extends JPanel implements ActionListener {
     // Recreates entire population based on current p and q values
     public void updateAlleles() {
 
-        pInput.setText(""+pSlider.getValue());
-        // qInput.setText(""+pSlider.getValue());
-        P = Integer.valueOf(pInput.getText());
-        // Q =
-
         AA = P * P;
         Aa = 2 * P * Q;
         aa = Q * Q;
@@ -223,8 +229,8 @@ public class Screen extends JPanel implements ActionListener {
             popList.add("aa");
         }
 
-        pInput.setText(String.format("%,.3f", P));
-        qInput.setText(String.format("%,.3f", Q));
+        // pInput.setText(String.format("%,.3f", P));
+        // qInput.setText(String.format("%,.3f", Q));
     }
 
     // Repopulates using kill percent of AA, Aa, and aa; population remains constant
@@ -362,5 +368,67 @@ public class Screen extends JPanel implements ActionListener {
         // killButton.setBounds(50, 650, 200, 30);
         // killButton.setFont(f2);
         // add(killButton);
+
+        g.setFont(f1);
+        g.drawString("p^2 + 2pq + q^2 = 1", 40, 730);
+    }
+
+    public void checkPQ() {
+        // sync p/q sliders and inputs
+        double pSliderInput = pSlider.getValue() / 100.0;
+        double qSliderInput = qSlider.getValue() / 100.0;
+        double pFieldInput = Double.valueOf(pInput.getText());
+        double qFieldInput = Double.valueOf(qInput.getText());
+        boolean pOff = false;
+        boolean qOff = false;
+        if (pSliderInput != P) {
+            pInput.setText("" + pSliderInput);
+            P = pSliderInput;
+            pOff = true;
+        } else if (pFieldInput != P) {
+            pSlider.setValue((int) (pFieldInput * 100.0));
+            P = pFieldInput;
+            pOff = true;
+        } else if (qSliderInput != Q) {
+            qInput.setText("" + qSliderInput);
+            Q = qSliderInput;
+            qOff = true;
+        } else if (qFieldInput != Q) {
+            qSlider.setValue((int) (qFieldInput * 100.0));
+            Q = qFieldInput;
+            qOff = true;
+        }
+
+        pSliderInput = pSlider.getValue() / 100.0;
+        qSliderInput = qSlider.getValue() / 100.0;
+        pFieldInput = Double.valueOf(pInput.getText());
+        qFieldInput = Double.valueOf(qInput.getText());
+        // if (Math.abs(pSliderInput - P) > 0.1 || Math.abs(pFieldInput - P) > 0.1) {
+        // System.out.println(P + "PPPPPPP");
+        // System.out.println(pSliderInput);
+        // System.out.println(pInput.getText());
+
+        // pOff = true;
+        // }
+        // if (Math.abs(qSliderInput - Q) > 0.1 || Math.abs(qFieldInput - Q) > 0.1) {
+        // System.out.println(Q + "QQQQQQQ");
+        // System.out.println(qSliderInput);
+        // System.out.println(qInput.getText());
+
+        // qOff = true;
+        // }
+        if (pOff) { // p is changed
+            // System.out.println("P OFF");
+            Q = 1-P;
+            qInput.setText("" + Q);
+            qSlider.setValue((int) (Q * 100.0));
+            pOff = false;
+        } else if (qOff) {
+            // System.out.println("Q OFF");
+            P = 1-Q;
+            pInput.setText("" + P);
+            pSlider.setValue((int) (P * 100.0));
+            qOff = false;
+        }
     }
 }
