@@ -5,20 +5,21 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 import javax.imageio.ImageIO;
-import java.net.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Screen extends JPanel implements ActionListener {
 
     private JTextField pInput, qInput, killAAInput, killAaInput, killaaInput, populationInput;
-    private double P = 0.5;
-    private double Q = 0.5;
-    private double AA, Aa, aa;
+    private JSlider pSlider, qSlider;
+    private double P, Q, AA, Aa, aa;
     private int popSize = 10000;
     private JButton updateButton, killButton, reproduceButton;
     private BufferedImage pool;
     private ArrayList<String> popList;
+
+    private Font f1 = new Font(Font.DIALOG_INPUT, Font.BOLD | Font.ITALIC, 20);
+    private Font f2 = new Font(Font.DIALOG, Font.BOLD, 15);
+    private Font f3 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
+    private Font f4 = new Font(Font.SERIF, Font.PLAIN, 12);
 
     public Screen() throws IOException {
 
@@ -36,98 +37,71 @@ public class Screen extends JPanel implements ActionListener {
             popList.add("aa");
         }
 
+        // set up side panel stuff
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable.put(0, new JLabel("0.0"));
+        labelTable.put(50, new JLabel("0.5"));
+        labelTable.put(100, new JLabel("1.0"));
+
+        pSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        pSlider.setLabelTable(labelTable);
+        pSlider.setBounds(50, 80, 200, 50);
+        pSlider.setMajorTickSpacing(10);
+        pSlider.setMinorTickSpacing(1);
+        pSlider.setPaintTicks(true);
+        pSlider.setPaintLabels(true);
+        pSlider.setFont(f4);
         pInput = new JTextField();
-        pInput.setBounds(50, 50, 100, 30);
+        pInput.setBounds(50, 130, 200, 30);
         pInput.setText("0.5");
-        /*
-         * pInput.addMouseListener(new MouseAdapter() {
-         * 
-         * @Override
-         * public void mouseExited(MouseEvent e) {
-         * double p = Double.valueOf(pInput.getText());
-         * if (p < 0.0) {
-         * p = 0.0;
-         * }
-         * double q = 1.0 - p;
-         * qInput.setText(String.format("%f", q));
-         * repaint();
-         * }
-         * });
-         */
-        // this.add(pInput);
+        add(pSlider);
+        add(pInput);
 
+        qSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        qSlider.setLabelTable(labelTable);
+        qSlider.setBounds(50, 210, 200, 50);
+        qSlider.setMajorTickSpacing(10);
+        qSlider.setMinorTickSpacing(1);
+        qSlider.setPaintTicks(true);
+        qSlider.setPaintLabels(true);
+        qSlider.setFont(f4);
         qInput = new JTextField();
-        qInput.setBounds(150, 50, 100, 30);
+        qInput.setBounds(50, 260, 200, 30);
         qInput.setText("0.5");
-        /*
-         * qInput.addMouseListener(new MouseAdapter() {
-         * 
-         * @Override
-         * public void mouseExited(MouseEvent e) {
-         * double q = Double.valueOf(qInput.getText());
-         * if (q < 0.0) {
-         * q = 0.0;
-         * }
-         * double p = 1.0 - q;
-         * pInput.setText(String.format("%f", p));
-         * repaint();
-         * }
-         * });
-         */
-        // this.add(qInput);
-
-        updateButton = new JButton();
-        updateButton.setBounds(250, 50, 200, 30);
-        updateButton.setText("UPDATE VALUES");
-        // this.add(updateButton);
-        updateButton.addActionListener(this);
-
-        // reproduceButton = new JButton();
-        // reproduceButton.setBounds(250, 100, 200, 30);
-        // reproduceButton.setText("REPRODUCE POPULATION");
-        // // this.add(reproduceButton);
-        // reproduceButton.addActionListener(this);
-        // reproduceButton.setVisible(false);
-
-        killAAInput = new JTextField();
-        killAAInput.setBounds(50, 210, 100, 30);
-        killAAInput.setText("AA%");
-        // this.add(killAAInput);
-        killAAInput.setVisible(true);
-
-        killAaInput = new JTextField();
-        killAaInput.setBounds(150, 210, 100, 30);
-        killAaInput.setText("Aa%");
-        // this.add(killAaInput);
-
-        killaaInput = new JTextField();
-        killaaInput.setBounds(250, 210, 100, 30);
-        killaaInput.setText("aa%");
-        // this.add(killaaInput);
-
-        killButton = new JButton();
-        killButton.setBounds(350, 210, 280, 30);
-        killButton.setText("Perform Natral Selection");
-        // this.add(killButton);
-        killButton.addActionListener(this);
+        add(qSlider);
+        add(qInput);
 
         populationInput = new JTextField();
-        populationInput.setBounds(170, 80, 100, 30);
-        populationInput.setText(popSize + "");
-        populationInput.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // field.setText("");
-                // repaint();
-            }
+        populationInput.setBounds(50, 340, 200, 30);
+        populationInput.setText("10000");
+        add(populationInput);
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // if (field.getText().isEmpty())
-                // field.setText(name);
-            }
-        });
-        // this.add(populationInput);
+        updateButton = new JButton();
+        updateButton.setBounds(50, 390, 200, 30);
+        updateButton.setFont(f2);
+        updateButton.setText("UPDATE VALUES");
+        add(updateButton);
+
+        killAAInput = new JTextField();
+        killAAInput.setBounds(50, 470, 200, 30);
+        killAAInput.setText("0");
+        add(killAAInput);
+
+        killAaInput = new JTextField();
+        killAaInput.setBounds(50, 540, 200, 30);
+        killAaInput.setText("0");
+        add(killAaInput);
+
+        killaaInput = new JTextField();
+        killaaInput.setBounds(50, 610, 200, 30);
+        killaaInput.setText("0");
+        add(killaaInput);
+
+        killButton = new JButton();
+        killButton.setBounds(50, 650, 200, 30);
+        killButton.setFont(f2);
+        killButton.setText("NATURAL SELECTION");
+        add(killButton);
 
         pool = ImageIO.read(new File("pool.jpeg"));
         setLayout(null);
@@ -141,6 +115,8 @@ public class Screen extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        setUpSidePanel(g);
 
     }
 
@@ -226,6 +202,11 @@ public class Screen extends JPanel implements ActionListener {
     // Recreates entire population based on current p and q values
     public void updateAlleles() {
 
+        pInput.setText(""+pSlider.getValue());
+        // qInput.setText(""+pSlider.getValue());
+        P = Integer.valueOf(pInput.getText());
+        // Q =
+
         AA = P * P;
         Aa = 2 * P * Q;
         aa = Q * Q;
@@ -296,10 +277,90 @@ public class Screen extends JPanel implements ActionListener {
         P = (final_AA * 2 + final_Aa) / (popSize * 2);
         Q = (final_aa * 2 + final_Aa) / (popSize * 2);
         System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
+
         updateAlleles();
     }
 
     public double round(double a) {
         return Math.round(a * 100.00) / 100.00;
+    }
+
+    public void setUpSidePanel(Graphics g) {
+
+        g.setFont(f1);
+        g.drawString("Values", 45, 50);
+
+        // Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        // labelTable.put(0, new JLabel("0.0"));
+        // labelTable.put(50, new JLabel("0.5"));
+        // labelTable.put(100, new JLabel("1.0"));
+
+        // p
+        g.setFont(f2);
+        g.drawString("p", 50, 70);
+
+        // g.setFont(f4);
+        // pSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        // pSlider.setLabelTable(labelTable);
+        // pSlider.setBounds(50, 80, 200, 50);
+        // pSlider.setMajorTickSpacing(10);
+        // pSlider.setMinorTickSpacing(1);
+        // pSlider.setPaintTicks(true);
+        // pSlider.setPaintLabels(true);
+        // pInput = new JTextField();
+        // pInput.setBounds(50, 130, 200, 30);
+        // pInput.setText("0.5");
+        // add(pSlider);
+        // add(pInput);
+
+        // q
+        g.setFont(f2);
+        g.drawString("q", 50, 200);
+
+        // g.setFont(f4);
+        // qSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        // qSlider.setLabelTable(labelTable);
+        // qSlider.setBounds(50, 210, 200, 50);
+        // qSlider.setMajorTickSpacing(10);
+        // qSlider.setMinorTickSpacing(1);
+        // qSlider.setPaintTicks(true);
+        // qSlider.setPaintLabels(true);
+        // qInput = new JTextField();
+        // qInput.setBounds(50, 260, 200, 30);
+        // qInput.setText("0.5");
+        // add(qSlider);
+        // add(qInput);
+
+        // population
+        g.setFont(f2);
+        g.drawString("Population", 50, 330);
+        // populationInput.setBounds(50, 340, 200, 30);
+        // add(populationInput);
+
+        // update button
+        // updateButton.setBounds(50, 390, 200, 30);
+        // updateButton.setFont(f2);
+        // add(updateButton);
+
+        g.setFont(f2);
+        // AA
+        g.drawString("Kill AA%", 50, 460);
+        // killAAInput.setBounds(50, 470, 200, 30);
+        // add(killAAInput);
+
+        // Aa
+        g.drawString("Kill Aa%", 50, 530);
+        // killAaInput.setBounds(50, 540, 200, 30);
+        // add(killAaInput);
+
+        // aa
+        g.drawString("Kill aa%", 50, 600);
+        // killaaInput.setBounds(50, 610, 200, 30);
+        // add(killaaInput);
+
+        // // nat select button
+        // killButton.setBounds(50, 650, 200, 30);
+        // killButton.setFont(f2);
+        // add(killButton);
     }
 }
