@@ -163,8 +163,11 @@ public class Screen extends JPanel implements ActionListener {
         g.drawString("GENETICS SIMULATION", 570, 50);
 
         g.setFont(f2);
+        g.setColor(Color.red);
         g.drawString("AA: " + AA, 400, 100);
+        g.setColor(Color.pink);
         g.drawString("Aa: " + Aa, 400, 130);
+        g.setColor(Color.gray);
         g.drawString("aa: " + aa, 400, 160);
 
         // gene pool
@@ -188,6 +191,15 @@ public class Screen extends JPanel implements ActionListener {
             g.drawString("POPULATION", 400, 300);
 
             drawAlleles(g);
+
+            g.setFont(f3);
+            g.setColor(Color.red);
+            g.drawString("AA: " + AA*popSize, 1000, 300);
+            g.setColor(Color.pink);
+            g.drawString("Aa: " + Aa*popSize, 1000, 330);
+            g.setColor(Color.gray);
+            g.drawString("aa: " + aa*popSize, 1000, 360);
+
         } else {
             g.setColor(Color.black);
             g.setFont(f1);
@@ -247,6 +259,7 @@ public class Screen extends JPanel implements ActionListener {
 
             naturalSelection(Integer.parseInt(killAAInput.getText()), Integer.parseInt(killAaInput.getText()),
                     Integer.parseInt(killaaInput.getText()));
+            // updateAlleles();
 
         }
         if (e.getSource() == showPop) {
@@ -352,7 +365,7 @@ public class Screen extends JPanel implements ActionListener {
         // System.out.println("current AA" + current_AA);
         double current_Aa = popSize * Aa; // 4200
         double current_aa = popSize * aa; // 900
-        System.out.println("old " + current_AA + " " + current_Aa + " " + current_aa);
+        // System.out.println("old " + current_AA + " " + current_Aa + " " + current_aa);
 
         // decimal percent of who stays alive
         double remaining_AA_percent = 1 - AA_in / 100.0; // 0.5
@@ -364,7 +377,7 @@ public class Screen extends JPanel implements ActionListener {
         double new_AA = current_AA * remaining_AA_percent; // 2450
         double new_Aa = current_Aa * remaining_Aa_percent; // 4200
         double new_aa = current_aa * remaining_aa_percent; // 900
-        System.out.println("new" + new_AA + " " + new_Aa + " " + new_aa);
+        // System.out.println("new" + new_AA + " " + new_Aa + " " + new_aa);
 
         // new population
         popSize = (int) Math.round(new_AA + new_Aa + new_aa); // 7550
@@ -374,7 +387,7 @@ public class Screen extends JPanel implements ActionListener {
         double final_AA = new_AA * oldPopSize / popSize; // 3,245.0331125828
         double final_Aa = new_Aa * oldPopSize / popSize; // 5,562.9139072848
         double final_aa = new_aa * oldPopSize / popSize; // 1,192.0529801325
-        System.out.println("final" + final_AA + " " + final_Aa + " " + final_aa);
+        // System.out.println("final" + final_AA + " " + final_Aa + " " + final_aa);
         popSize = (int) Math.round(final_AA + final_Aa + final_aa); // 7550
 
         // converting back to int percents
@@ -387,15 +400,14 @@ public class Screen extends JPanel implements ActionListener {
 
         aa = final_aa / popSize; // 0.11920529801324503
         aa = round(aa);
-        System.out.println("percents" + AA + " " + Aa + " " + aa);
+        // System.out.println("percents" + AA + " " + Aa + " " + aa);
 
         P = (final_AA * 2 + final_Aa) / (popSize * 2);
         Q = (final_aa * 2 + final_Aa) / (popSize * 2);
-        System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
-        AAlist.add(AA);
-        Aalist.add(Aa);
-        aalist.add(aa);
-        updateAlleles();
+        // System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
+        // AAlist.add(AA);
+        // Aalist.add(Aa);
+        // aalist.add(aa);
     }
 
     public double round(double a) {
