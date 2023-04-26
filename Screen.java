@@ -9,23 +9,30 @@ import javax.imageio.ImageIO;
 public class Screen extends JPanel implements ActionListener {
 
     private JTextField pInput, qInput, killAAInput, killAaInput, killaaInput, populationInput;
-    private JButton updateButton, killButton, reproduceButton;
+    private JButton updateButton, killButton, showPop, showGraph;
     private JSlider pSlider, qSlider;
 
     private Hashtable<Integer, JLabel> labelTable;
     private ArrayList<String> popList;
+    private ArrayList<Double> AAlist, Aalist, aalist;
 
-    private Font f1 = new Font(Font.DIALOG_INPUT, Font.BOLD | Font.ITALIC, 20);
-    private Font f2 = new Font(Font.DIALOG, Font.BOLD, 15);
-    private Font f3 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
-    private Font f4 = new Font(Font.SERIF, Font.PLAIN, 12);
+    private Font f1 = new Font(Font.MONOSPACED, Font.BOLD, 30);
+    private Font f2 = new Font(Font.DIALOG_INPUT, Font.BOLD | Font.ITALIC, 20);
+    private Font f3 = new Font(Font.DIALOG, Font.BOLD, 15);
+    private Font f4 = new Font(Font.SANS_SERIF, Font.BOLD, 14);
+    private Font f5 = new Font(Font.SERIF, Font.PLAIN, 12);
 
     private BufferedImage pool;
 
     private double P, Q, AA, Aa, aa;
     private int popSize = 10000;
+    private boolean popPage = true;
 
     public Screen() throws IOException {
+
+        AAlist = new ArrayList<Double>();
+        Aalist = new ArrayList<Double>();
+        aalist = new ArrayList<Double>();
 
         popList = new ArrayList<String>();
         AA = P * P;
@@ -54,7 +61,7 @@ public class Screen extends JPanel implements ActionListener {
         pSlider.setMinorTickSpacing(5);
         pSlider.setPaintTicks(true);
         pSlider.setPaintLabels(true);
-        pSlider.setFont(f4);
+        pSlider.setFont(f5);
         pSlider.setSnapToTicks(true);
         pInput = new JTextField();
         pInput.setBounds(50, 130, 200, 30);
@@ -69,7 +76,7 @@ public class Screen extends JPanel implements ActionListener {
         qSlider.setMinorTickSpacing(5);
         qSlider.setPaintTicks(true);
         qSlider.setPaintLabels(true);
-        qSlider.setFont(f4);
+        qSlider.setFont(f5);
         qSlider.setSnapToTicks(true);
         qInput = new JTextField();
         qInput.setBounds(50, 260, 200, 30);
@@ -85,11 +92,12 @@ public class Screen extends JPanel implements ActionListener {
         populationInput.setText("10000");
         add(populationInput);
 
-        updateButton = new JButton();
-        updateButton.setBounds(50, 390, 200, 30);
-        updateButton.setFont(f2);
-        updateButton.setText("UPDATE VALUES");
-        add(updateButton);
+        // updateButton = new JButton();
+        // updateButton.setBounds(50, 390, 200, 30);
+        // updateButton.setFont(f3);
+        // updateButton.setText("UPDATE VALUES");
+        // add(updateButton);
+        // updateButton.addActionListener(this);
 
         killAAInput = new JTextField();
         killAAInput.setBounds(50, 470, 200, 30);
@@ -108,9 +116,24 @@ public class Screen extends JPanel implements ActionListener {
 
         killButton = new JButton();
         killButton.setBounds(50, 650, 200, 30);
-        killButton.setFont(f2);
+        killButton.setFont(f3);
         killButton.setText("NATURAL SELECTION");
         add(killButton);
+        killButton.addActionListener(this);
+
+        showPop = new JButton();
+        showPop.setBounds(600, 300, 200, 30);
+        showPop.setFont(f3);
+        showPop.setText("SHOW POPULATION");
+        add(showPop);
+        showPop.addActionListener(this);
+
+        showGraph = new JButton();
+        showGraph.setBounds(600, 350, 200, 30);
+        showGraph.setFont(f3);
+        showGraph.setText("SHOW GRAPH");
+        add(showGraph);
+        showGraph.addActionListener(this);
 
         pool = ImageIO.read(new File("pool.jpeg"));
         setLayout(null);
@@ -118,15 +141,92 @@ public class Screen extends JPanel implements ActionListener {
     }
 
     public Dimension getPreferredSize() {
-        return new Dimension(1000, 1000);
+        return new Dimension(1200, 800);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        g.setColor(Color.white);
+        g.fillRect(0, 0, 10000, 10000);
+        g.setColor(Color.black);
+
+        updateAlleles();
+
         setUpSidePanel(g);
         checkPQ();
+
+        popSize = Integer.valueOf(populationInput.getText());
+
+        g.setFont(f1);
+        g.drawString("GENETICS SIMULATION", 570, 50);
+
+        g.setFont(f2);
+        g.drawString("AA: " + AA, 400, 100);
+        g.drawString("Aa: " + Aa, 400, 130);
+        g.drawString("aa: " + aa, 400, 160);
+
+        // gene pool
+        g.drawImage(pool, 860, 50, null);
+        g.setColor(Color.black);
+
+        g.setColor(Color.red);
+        g.fillOval(950, 100, 80, 50);
+        g.setColor(Color.gray);
+        g.fillOval(1020, 100, 80, 50);
+        g.setColor(Color.black);
+        g.setFont(f5);
+        g.drawString("A: " + String.format("%,.0f", P * popSize * 2), 970, 130);
+        g.drawString("a: " + String.format("%,.0f", Q * popSize * 2), 1040, 130);
+
+        g.setFont(f2);
+        g.drawString("GENE POOL", 950, 240);
+
+        if (popPage) {
+            g.setFont(f1);
+            g.drawString("POPULATION", 400, 300);
+
+            drawAlleles(g);
+        } else {
+            g.setColor(Color.black);
+            g.setFont(f1);
+            g.drawString("GRAPH", 400, 300);
+
+            g.fillRect(400, 550, 5, 150);
+            g.fillRect(400, 700, 450, 5);
+            g.drawString("1", 390, 555);
+            g.drawString("0", 390, 705);
+
+            g.setFont(f4);
+            g.drawString("Generations: " + AAlist.size(), 400, 330);
+            if (!AAlist.isEmpty()) {
+                int step = 30;
+                int graphLength = step * (AAlist.size() - 1);
+                if (graphLength > 400) {
+                    step = 400 / (AAlist.size() - 1);
+                }
+
+                for (int i = 0; i < AAlist.size(); i++) {
+                    int x = 400 + i * step;
+                    int y = (int) (700 - AAlist.get(i) * 150);
+                    g.setColor(Color.red);
+                    g.fillOval(x, y, 3, 3);
+                }
+                for (int i = 0; i < Aalist.size(); i++) {
+                    int x = 400 + i * step;
+                    int y = (int) (700 - Aalist.get(i) * 150);
+                    g.setColor(Color.pink);
+                    g.fillOval(x, y, 3, 3);
+                }
+                for (int i = 0; i < aalist.size(); i++) {
+                    int x = 400 + i * step;
+                    int y = (int) (700 - aalist.get(i) * 150);
+                    g.setColor(Color.gray);
+                    g.fillOval(x, y, 3, 3);
+                }
+            }
+        }
 
         repaint();
     }
@@ -138,13 +238,22 @@ public class Screen extends JPanel implements ActionListener {
             Q = Double.valueOf(qInput.getText());
 
             popSize = Integer.valueOf(populationInput.getText());
-            updateAlleles();
+
+            AAlist.clear();
+            Aalist.clear();
+            aalist.clear();
         }
         if (e.getSource() == killButton) {
 
             naturalSelection(Integer.parseInt(killAAInput.getText()), Integer.parseInt(killAaInput.getText()),
                     Integer.parseInt(killaaInput.getText()));
 
+        }
+        if (e.getSource() == showPop) {
+            popPage = true;
+        }
+        if (e.getSource() == showGraph) {
+            popPage = false;
         }
 
         repaint();
@@ -165,46 +274,46 @@ public class Screen extends JPanel implements ActionListener {
             }
         }
 
-        int x = 0;
-        int y = 250;
+        int x = 350;
+        int y = 400;
         int j = 0;
 
         for (int i = 0; i < AA_ct; i++) {
             g.setColor(Color.red);
-            g.fillOval(x, y, 5, 5);
+            g.fillOval(x, y, 4, 4);
             // g.setColor(Color.black);
             // g.drawString("AA", x+20, y+20);
             j++;
-            x += 5;
+            x += 4;
             if (j % 200 == 0) {
-                x = 0;
-                y += 5;
+                x = 350;
+                y += 4;
             }
         }
 
         for (int i = 0; i < Aa_ct; i++) {
             g.setColor(Color.pink);
-            g.fillOval(x, y, 5, 5);
+            g.fillOval(x, y, 4, 4);
             // g.setColor(Color.black);
             // g.drawString("Aa", x+20, y+20);
             j++;
-            x += 5;
+            x += 4;
             if (j % 200 == 0) {
-                x = 0;
-                y += 5;
+                x = 350;
+                y += 4;
             }
         }
 
         for (int i = 0; i < aa_ct; i++) {
             g.setColor(Color.gray);
-            g.fillOval(x, y, 5, 5);
+            g.fillOval(x, y, 4, 4);
             // g.setColor(Color.black);
             // g.drawString("aa", x+20, y+20);
             j++;
-            x += 5;
+            x += 4;
             if (j % 200 == 0) {
-                x = 0;
-                y += 5;
+                x = 350;
+                y += 4;
             }
         }
 
@@ -283,7 +392,9 @@ public class Screen extends JPanel implements ActionListener {
         P = (final_AA * 2 + final_Aa) / (popSize * 2);
         Q = (final_aa * 2 + final_Aa) / (popSize * 2);
         System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
-
+        AAlist.add(AA);
+        Aalist.add(Aa);
+        aalist.add(aa);
         updateAlleles();
     }
 
@@ -293,8 +404,8 @@ public class Screen extends JPanel implements ActionListener {
 
     public void setUpSidePanel(Graphics g) {
 
-        g.setFont(f1);
-        g.drawString("Values", 45, 50);
+        g.setFont(f2);
+        g.drawString("Values", 43, 30);
 
         // Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         // labelTable.put(0, new JLabel("0.0"));
@@ -302,10 +413,10 @@ public class Screen extends JPanel implements ActionListener {
         // labelTable.put(100, new JLabel("1.0"));
 
         // p
-        g.setFont(f2);
+        g.setFont(f3);
         g.drawString("p", 50, 70);
 
-        // g.setFont(f4);
+        // g.setFont(f5);
         // pSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
         // pSlider.setLabelTable(labelTable);
         // pSlider.setBounds(50, 80, 200, 50);
@@ -320,10 +431,10 @@ public class Screen extends JPanel implements ActionListener {
         // add(pInput);
 
         // q
-        g.setFont(f2);
+        g.setFont(f3);
         g.drawString("q", 50, 200);
 
-        // g.setFont(f4);
+        // g.setFont(f5);
         // qSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
         // qSlider.setLabelTable(labelTable);
         // qSlider.setBounds(50, 210, 200, 50);
@@ -338,17 +449,17 @@ public class Screen extends JPanel implements ActionListener {
         // add(qInput);
 
         // population
-        g.setFont(f2);
+        g.setFont(f3);
         g.drawString("Population", 50, 330);
         // populationInput.setBounds(50, 340, 200, 30);
         // add(populationInput);
 
         // update button
         // updateButton.setBounds(50, 390, 200, 30);
-        // updateButton.setFont(f2);
+        // updateButton.setFont(f3);
         // add(updateButton);
 
-        g.setFont(f2);
+        g.setFont(f3);
         // AA
         g.drawString("Kill AA%", 50, 460);
         // killAAInput.setBounds(50, 470, 200, 30);
@@ -366,11 +477,13 @@ public class Screen extends JPanel implements ActionListener {
 
         // // nat select button
         // killButton.setBounds(50, 650, 200, 30);
-        // killButton.setFont(f2);
+        // killButton.setFont(f3);
         // add(killButton);
 
-        g.setFont(f1);
+        g.setFont(f2);
         g.drawString("p^2 + 2pq + q^2 = 1", 40, 730);
+
+        g.drawLine(300, 20, 300, 780);
     }
 
     public void checkPQ() {
@@ -419,13 +532,13 @@ public class Screen extends JPanel implements ActionListener {
         // }
         if (pOff) { // p is changed
             // System.out.println("P OFF");
-            Q = 1-P;
+            Q = 1 - P;
             qInput.setText("" + Q);
             qSlider.setValue((int) (Q * 100.0));
             pOff = false;
         } else if (qOff) {
             // System.out.println("Q OFF");
-            P = 1-Q;
+            P = 1 - Q;
             pInput.setText("" + P);
             pSlider.setValue((int) (P * 100.0));
             qOff = false;
