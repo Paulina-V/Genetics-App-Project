@@ -54,7 +54,7 @@ public class Screen extends JPanel implements ActionListener {
          * }
          * });
          */
-        this.add(pInput);
+        // this.add(pInput);
 
         qInput = new JTextField();
         qInput.setBounds(150, 50, 100, 30);
@@ -74,41 +74,41 @@ public class Screen extends JPanel implements ActionListener {
          * }
          * });
          */
-        this.add(qInput);
+        // this.add(qInput);
 
         updateButton = new JButton();
         updateButton.setBounds(250, 50, 200, 30);
         updateButton.setText("UPDATE VALUES");
-        this.add(updateButton);
+        // this.add(updateButton);
         updateButton.addActionListener(this);
 
-        reproduceButton = new JButton();
-        reproduceButton.setBounds(250, 100, 200, 30);
-        reproduceButton.setText("REPRODUCE POPULATION");
-        this.add(reproduceButton);
-        reproduceButton.addActionListener(this);
-        reproduceButton.setVisible(false);
+        // reproduceButton = new JButton();
+        // reproduceButton.setBounds(250, 100, 200, 30);
+        // reproduceButton.setText("REPRODUCE POPULATION");
+        // // this.add(reproduceButton);
+        // reproduceButton.addActionListener(this);
+        // reproduceButton.setVisible(false);
 
         killAAInput = new JTextField();
         killAAInput.setBounds(50, 210, 100, 30);
         killAAInput.setText("AA%");
-        this.add(killAAInput);
+        // this.add(killAAInput);
         killAAInput.setVisible(true);
 
         killAaInput = new JTextField();
         killAaInput.setBounds(150, 210, 100, 30);
         killAaInput.setText("Aa%");
-        this.add(killAaInput);
+        // this.add(killAaInput);
 
         killaaInput = new JTextField();
         killaaInput.setBounds(250, 210, 100, 30);
         killaaInput.setText("aa%");
-        this.add(killaaInput);
+        // this.add(killaaInput);
 
         killButton = new JButton();
         killButton.setBounds(350, 210, 280, 30);
         killButton.setText("Perform Natral Selection");
-        this.add(killButton);
+        // this.add(killButton);
         killButton.addActionListener(this);
 
         populationInput = new JTextField();
@@ -127,7 +127,7 @@ public class Screen extends JPanel implements ActionListener {
                 // field.setText(name);
             }
         });
-        this.add(populationInput);
+        // this.add(populationInput);
 
         pool = ImageIO.read(new File("pool.jpeg"));
         setLayout(null);
@@ -142,32 +142,6 @@ public class Screen extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.setColor(Color.white);
-        g.fillRect(0, 0, 1000, 1000);
-        g.drawImage(pool, 450, 50, null);
-
-        g.setColor(Color.blue);
-        g.drawString("P:", 50, 40);
-        g.drawString("Q:", 150, 40);
-
-        // updateAlleles();
-
-        g.drawString("Total population: ", 50, 100);
-        g.setColor(Color.red);
-        g.drawString("AA: " + String.format("%,.3f", AA), 50, 130);
-        g.drawString("Aa: " + String.format("%,.3f", Aa), 50, 160);
-        g.setColor(Color.black);
-        g.drawString("aa: " + String.format("%,.3f", aa), 50, 190);
-
-        g.setColor(Color.red);
-        g.fillOval(550, 100, 50, 50);
-        g.setColor(Color.gray);
-        g.fillOval(630, 100, 50, 50);
-        g.setColor(Color.black);
-        g.drawString("A: " + String.format("%,.0f", P * popSize * 2), 560, 130);
-        g.drawString("a: " + String.format("%,.0f", Q * popSize * 2), 640, 130);
-
-        drawAlleles(g);
     }
 
     public void actionPerformed(ActionEvent e) {
