@@ -136,6 +136,9 @@ public class Screen extends JPanel implements ActionListener {
         showGraph.addActionListener(this);
 
         pool = ImageIO.read(new File("pool.jpeg"));
+
+        updateAlleles();
+
         setLayout(null);
         setFocusable(true);
     }
@@ -152,12 +155,16 @@ public class Screen extends JPanel implements ActionListener {
         g.fillRect(0, 0, 10000, 10000);
         g.setColor(Color.black);
 
-        updateAlleles();
+        // updateAlleles();
 
         setUpSidePanel(g);
         checkPQ();
 
-        popSize = Integer.valueOf(populationInput.getText());
+        int newPop = Integer.valueOf(populationInput.getText());
+        if (newPop != popSize) {
+            updateAlleles();
+            popSize = newPop;
+        }
 
         g.setFont(f1);
         g.drawString("GENETICS SIMULATION", 570, 50);
@@ -194,11 +201,11 @@ public class Screen extends JPanel implements ActionListener {
 
             g.setFont(f3);
             g.setColor(Color.red);
-            g.drawString("AA: " + AA*popSize, 1000, 300);
+            g.drawString("AA: " + AA * popSize, 1000, 300);
             g.setColor(Color.pink);
-            g.drawString("Aa: " + Aa*popSize, 1000, 330);
+            g.drawString("Aa: " + Aa * popSize, 1000, 330);
             g.setColor(Color.gray);
-            g.drawString("aa: " + aa*popSize, 1000, 360);
+            g.drawString("aa: " + aa * popSize, 1000, 360);
 
         } else {
             g.setColor(Color.black);
@@ -259,7 +266,8 @@ public class Screen extends JPanel implements ActionListener {
 
             naturalSelection(Integer.parseInt(killAAInput.getText()), Integer.parseInt(killAaInput.getText()),
                     Integer.parseInt(killaaInput.getText()));
-            // updateAlleles();
+            updateAlleles();
+            System.out.println("update");
 
         }
         if (e.getSource() == showPop) {
@@ -365,7 +373,8 @@ public class Screen extends JPanel implements ActionListener {
         // System.out.println("current AA" + current_AA);
         double current_Aa = popSize * Aa; // 4200
         double current_aa = popSize * aa; // 900
-        // System.out.println("old " + current_AA + " " + current_Aa + " " + current_aa);
+        // System.out.println("old " + current_AA + " " + current_Aa + " " +
+        // current_aa);
 
         // decimal percent of who stays alive
         double remaining_AA_percent = 1 - AA_in / 100.0; // 0.5
@@ -403,11 +412,15 @@ public class Screen extends JPanel implements ActionListener {
         // System.out.println("percents" + AA + " " + Aa + " " + aa);
 
         P = (final_AA * 2 + final_Aa) / (popSize * 2);
+        pInput.setText(""+P);
+        pSlider.setValue((int)(P*100.0));
         Q = (final_aa * 2 + final_Aa) / (popSize * 2);
+        qInput.setText(""+Q);
+        pSlider.setValue((int)(Q*100.0));
         // System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
-        // AAlist.add(AA);
-        // Aalist.add(Aa);
-        // aalist.add(aa);
+        AAlist.add(AA);
+        Aalist.add(Aa);
+        aalist.add(aa);
     }
 
     public double round(double a) {
@@ -500,59 +513,50 @@ public class Screen extends JPanel implements ActionListener {
 
     public void checkPQ() {
         // sync p/q sliders and inputs
-        double pSliderInput = pSlider.getValue() / 100.0;
-        double qSliderInput = qSlider.getValue() / 100.0;
-        double pFieldInput = Double.valueOf(pInput.getText());
-        double qFieldInput = Double.valueOf(qInput.getText());
         boolean pOff = false;
         boolean qOff = false;
-        if (pSliderInput != P) {
-            pInput.setText("" + pSliderInput);
-            P = pSliderInput;
+        // if (Math.abs(pSlider.getValue() / 100.0 - P) > 0.05) {
+        //     pInput.setText("" + (pSlider.getValue() / 100.0));
+        //     // P = pSlider.getValue() / 100.0;
+        //     // pOff = true;
+
+        //     System.out.println(P + "................");
+        //     System.out.println(pSlider.getValue() / 100.0);
+        //     System.out.println(pInput.getText());
+        // } 
+        if (Double.valueOf(pInput.getText()) != P) {
+            pSlider.setValue((int) (Double.valueOf(pInput.getText()) * 100.0));
+            P = Double.valueOf(pInput.getText());
             pOff = true;
-        } else if (pFieldInput != P) {
-            pSlider.setValue((int) (pFieldInput * 100.0));
-            P = pFieldInput;
-            pOff = true;
-        } else if (qSliderInput != Q) {
-            qInput.setText("" + qSliderInput);
-            Q = qSliderInput;
-            qOff = true;
-        } else if (qFieldInput != Q) {
-            qSlider.setValue((int) (qFieldInput * 100.0));
-            Q = qFieldInput;
+
+            System.out.println(P);
+            System.out.println(pSlider.getValue() / 100);
+            System.out.println(pInput.getText());
+        } 
+        // if (Math.abs(qSlider.getValue() / 100.0 - Q) > 0.05) {
+        //     qInput.setText("" + (qSlider.getValue() / 100.0));
+        //     // Q = qSlider.getValue() / 100.0;
+        //     qOff = true;
+        // } 
+        if (Double.valueOf(qInput.getText()) != Q) {
+            qSlider.setValue((int) (Double.valueOf(qInput.getText()) * 100.0));
+            Q = Double.valueOf(qInput.getText());
             qOff = true;
         }
 
-        pSliderInput = pSlider.getValue() / 100.0;
-        qSliderInput = qSlider.getValue() / 100.0;
-        pFieldInput = Double.valueOf(pInput.getText());
-        qFieldInput = Double.valueOf(qInput.getText());
-        // if (Math.abs(pSliderInput - P) > 0.1 || Math.abs(pFieldInput - P) > 0.1) {
-        // System.out.println(P + "PPPPPPP");
-        // System.out.println(pSliderInput);
-        // System.out.println(pInput.getText());
-
-        // pOff = true;
-        // }
-        // if (Math.abs(qSliderInput - Q) > 0.1 || Math.abs(qFieldInput - Q) > 0.1) {
-        // System.out.println(Q + "QQQQQQQ");
-        // System.out.println(qSliderInput);
-        // System.out.println(qInput.getText());
-
-        // qOff = true;
-        // }
         if (pOff) { // p is changed
             // System.out.println("P OFF");
             Q = 1 - P;
             qInput.setText("" + Q);
             qSlider.setValue((int) (Q * 100.0));
+            updateAlleles();
             pOff = false;
         } else if (qOff) {
             // System.out.println("Q OFF");
             P = 1 - Q;
             pInput.setText("" + P);
             pSlider.setValue((int) (P * 100.0));
+            updateAlleles();
             qOff = false;
         }
     }
