@@ -4,7 +4,7 @@
 Hardy-Weinberg Genetics Simulation for Mr. Cmaylo's AP Biology classes.
 
 Additional features:
-X Natural Selection
-O Gene Flow
+- Natural Selection
+- Gene Flow
 
 By Paulina Vvedenskaya & Amanda Zhang
