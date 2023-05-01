@@ -416,7 +416,7 @@ public class Screen extends JPanel implements ActionListener {
         pSlider.setValue((int)(P*100.0));
         Q = (final_aa * 2 + final_Aa) / (popSize * 2);
         qInput.setText(""+Q);
-        pSlider.setValue((int)(Q*100.0));
+        qSlider.setValue((int)(Q*100.0));
         // System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
         AAlist.add(AA);
         Aalist.add(Aa);
@@ -515,29 +515,31 @@ public class Screen extends JPanel implements ActionListener {
         // sync p/q sliders and inputs
         boolean pOff = false;
         boolean qOff = false;
-        // if (Math.abs(pSlider.getValue() / 100.0 - P) > 0.05) {
-        //     pInput.setText("" + (pSlider.getValue() / 100.0));
-        //     // P = pSlider.getValue() / 100.0;
-        //     // pOff = true;
+        if (Math.abs(pSlider.getValue() / 100.0 - P) > 0.05) {
+            System.out.println("slider OFF");
 
-        //     System.out.println(P + "................");
-        //     System.out.println(pSlider.getValue() / 100.0);
-        //     System.out.println(pInput.getText());
-        // } 
+            pInput.setText("" + (pSlider.getValue() / 100.0));
+            // P = pSlider.getValue() / 100.0;
+            // pOff = true;
+
+            // System.out.println(P + "................");
+            // System.out.println(pSlider.getValue() / 100.0);
+            // System.out.println(pInput.getText());
+        } 
         if (Double.valueOf(pInput.getText()) != P) {
             pSlider.setValue((int) (Double.valueOf(pInput.getText()) * 100.0));
             P = Double.valueOf(pInput.getText());
             pOff = true;
 
             System.out.println(P);
-            System.out.println(pSlider.getValue() / 100);
+            System.out.println(pSlider.getValue() / 100.0);
             System.out.println(pInput.getText());
         } 
-        // if (Math.abs(qSlider.getValue() / 100.0 - Q) > 0.05) {
-        //     qInput.setText("" + (qSlider.getValue() / 100.0));
-        //     // Q = qSlider.getValue() / 100.0;
-        //     qOff = true;
-        // } 
+        if (Math.abs(qSlider.getValue() / 100.0 - Q) > 0.05) {
+            qInput.setText("" + (qSlider.getValue() / 100.0));
+            // Q = qSlider.getValue() / 100.0;
+            // qOff = true;
+        } 
         if (Double.valueOf(qInput.getText()) != Q) {
             qSlider.setValue((int) (Double.valueOf(qInput.getText()) * 100.0));
             Q = Double.valueOf(qInput.getText());
