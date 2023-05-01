@@ -1,7 +1,7 @@
-# Genetics Simulation 🧬
+# 🧬 Genetics Simulation
 *Advanced CS Quarter 3 Project*
 
-Hardy-Weinberg Genetics Simulation for Mr. Cmaylo's AP Biology classes.
+Modeling Population Genetics using the Hardy-Weinberg equation for Mr. Cmaylo's AP Biology classes.
 
 Cool Features:
 - Current population visualization
