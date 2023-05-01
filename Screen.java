@@ -92,13 +92,6 @@ public class Screen extends JPanel implements ActionListener {
         populationInput.setText("10000");
         add(populationInput);
 
-        // updateButton = new JButton();
-        // updateButton.setBounds(50, 390, 200, 30);
-        // updateButton.setFont(f3);
-        // updateButton.setText("UPDATE VALUES");
-        // add(updateButton);
-        // updateButton.addActionListener(this);
-
         killAAInput = new JTextField();
         killAAInput.setBounds(50, 470, 200, 30);
         killAAInput.setText("0");
@@ -154,8 +147,6 @@ public class Screen extends JPanel implements ActionListener {
         g.setColor(Color.white);
         g.fillRect(0, 0, 10000, 10000);
         g.setColor(Color.black);
-
-        // updateAlleles();
 
         setUpSidePanel(g);
         checkPQ();
@@ -267,7 +258,6 @@ public class Screen extends JPanel implements ActionListener {
             naturalSelection(Integer.parseInt(killAAInput.getText()), Integer.parseInt(killAaInput.getText()),
                     Integer.parseInt(killaaInput.getText()));
             updateAlleles();
-            System.out.println("update");
 
         }
         if (e.getSource() == showPop) {
@@ -302,8 +292,6 @@ public class Screen extends JPanel implements ActionListener {
         for (int i = 0; i < AA_ct; i++) {
             g.setColor(Color.red);
             g.fillOval(x, y, 4, 4);
-            // g.setColor(Color.black);
-            // g.drawString("AA", x+20, y+20);
             j++;
             x += 4;
             if (j % 200 == 0) {
@@ -315,8 +303,6 @@ public class Screen extends JPanel implements ActionListener {
         for (int i = 0; i < Aa_ct; i++) {
             g.setColor(Color.pink);
             g.fillOval(x, y, 4, 4);
-            // g.setColor(Color.black);
-            // g.drawString("Aa", x+20, y+20);
             j++;
             x += 4;
             if (j % 200 == 0) {
@@ -328,8 +314,6 @@ public class Screen extends JPanel implements ActionListener {
         for (int i = 0; i < aa_ct; i++) {
             g.setColor(Color.gray);
             g.fillOval(x, y, 4, 4);
-            // g.setColor(Color.black);
-            // g.drawString("aa", x+20, y+20);
             j++;
             x += 4;
             if (j % 200 == 0) {
@@ -358,9 +342,6 @@ public class Screen extends JPanel implements ActionListener {
         for (double i = 0; i < aa * popSize; i++) {
             popList.add("aa");
         }
-
-        // pInput.setText(String.format("%,.3f", P));
-        // qInput.setText(String.format("%,.3f", Q));
     }
 
     // Repopulates using kill percent of AA, Aa, and aa; population remains constant
@@ -369,55 +350,46 @@ public class Screen extends JPanel implements ActionListener {
         double oldPopSize = popSize;
 
         // current numbers
-        double current_AA = popSize * AA; // 4900
-        // System.out.println("current AA" + current_AA);
-        double current_Aa = popSize * Aa; // 4200
-        double current_aa = popSize * aa; // 900
-        // System.out.println("old " + current_AA + " " + current_Aa + " " +
-        // current_aa);
+        double current_AA = popSize * AA;
+        double current_Aa = popSize * Aa;
+        double current_aa = popSize * aa;
 
         // decimal percent of who stays alive
-        double remaining_AA_percent = 1 - AA_in / 100.0; // 0.5
-        // System.out.print("percent" + remaining_AA_percent);
-        double remaining_Aa_percent = 1 - Aa_in / 100.0; // 1
-        double remaining_aa_percent = 1 - aa_in / 100.0; // 1
+        double remaining_AA_percent = 1 - AA_in / 100.0;
+        double remaining_Aa_percent = 1 - Aa_in / 100.0;
+        double remaining_aa_percent = 1 - aa_in / 100.0;
 
         // new people - those who will survive the natural selection
-        double new_AA = current_AA * remaining_AA_percent; // 2450
-        double new_Aa = current_Aa * remaining_Aa_percent; // 4200
-        double new_aa = current_aa * remaining_aa_percent; // 900
-        // System.out.println("new" + new_AA + " " + new_Aa + " " + new_aa);
+        double new_AA = current_AA * remaining_AA_percent;
+        double new_Aa = current_Aa * remaining_Aa_percent;
+        double new_aa = current_aa * remaining_aa_percent;
 
         // new population
-        popSize = (int) Math.round(new_AA + new_Aa + new_aa); // 7550
-        // System.out.println("population" + new_population);
+        popSize = (int) Math.round(new_AA + new_Aa + new_aa);
 
         // scaling people up to input population
-        double final_AA = new_AA * oldPopSize / popSize; // 3,245.0331125828
-        double final_Aa = new_Aa * oldPopSize / popSize; // 5,562.9139072848
-        double final_aa = new_aa * oldPopSize / popSize; // 1,192.0529801325
-        // System.out.println("final" + final_AA + " " + final_Aa + " " + final_aa);
-        popSize = (int) Math.round(final_AA + final_Aa + final_aa); // 7550
+        double final_AA = new_AA * oldPopSize / popSize;
+        double final_Aa = new_Aa * oldPopSize / popSize;
+        double final_aa = new_aa * oldPopSize / popSize;
+        popSize = (int) Math.round(final_AA + final_Aa + final_aa);
 
         // converting back to int percents
-        // System.out.println(population);
-        AA = final_AA / popSize; // 0.3245033112582781
+        AA = final_AA / popSize;
         AA = round(AA);
 
-        Aa = final_Aa / popSize; // 0.5562913907284769
+        Aa = final_Aa / popSize;
         Aa = round(Aa);
 
-        aa = final_aa / popSize; // 0.11920529801324503
+        aa = final_aa / popSize;
         aa = round(aa);
-        // System.out.println("percents" + AA + " " + Aa + " " + aa);
 
         P = (final_AA * 2 + final_Aa) / (popSize * 2);
-        pInput.setText(""+P);
-        pSlider.setValue((int)(P*100.0));
+        pInput.setText("" + P);
+        pSlider.setValue((int) (P * 100.0));
         Q = (final_aa * 2 + final_Aa) / (popSize * 2);
-        qInput.setText(""+Q);
-        qSlider.setValue((int)(Q*100.0));
-        // System.out.println("P: " + P + " Q: " + Q + " sum: " + (P + Q));
+        qInput.setText("" + Q);
+        qSlider.setValue((int) (Q * 100.0));
+
         AAlist.add(AA);
         Aalist.add(Aa);
         aalist.add(aa);
@@ -432,78 +404,15 @@ public class Screen extends JPanel implements ActionListener {
         g.setFont(f2);
         g.drawString("Values", 43, 30);
 
-        // Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-        // labelTable.put(0, new JLabel("0.0"));
-        // labelTable.put(50, new JLabel("0.5"));
-        // labelTable.put(100, new JLabel("1.0"));
-
-        // p
         g.setFont(f3);
         g.drawString("p", 50, 70);
-
-        // g.setFont(f5);
-        // pSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-        // pSlider.setLabelTable(labelTable);
-        // pSlider.setBounds(50, 80, 200, 50);
-        // pSlider.setMajorTickSpacing(10);
-        // pSlider.setMinorTickSpacing(1);
-        // pSlider.setPaintTicks(true);
-        // pSlider.setPaintLabels(true);
-        // pInput = new JTextField();
-        // pInput.setBounds(50, 130, 200, 30);
-        // pInput.setText("0.5");
-        // add(pSlider);
-        // add(pInput);
-
-        // q
-        g.setFont(f3);
         g.drawString("q", 50, 200);
 
-        // g.setFont(f5);
-        // qSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-        // qSlider.setLabelTable(labelTable);
-        // qSlider.setBounds(50, 210, 200, 50);
-        // qSlider.setMajorTickSpacing(10);
-        // qSlider.setMinorTickSpacing(1);
-        // qSlider.setPaintTicks(true);
-        // qSlider.setPaintLabels(true);
-        // qInput = new JTextField();
-        // qInput.setBounds(50, 260, 200, 30);
-        // qInput.setText("0.5");
-        // add(qSlider);
-        // add(qInput);
-
-        // population
-        g.setFont(f3);
         g.drawString("Population", 50, 330);
-        // populationInput.setBounds(50, 340, 200, 30);
-        // add(populationInput);
 
-        // update button
-        // updateButton.setBounds(50, 390, 200, 30);
-        // updateButton.setFont(f3);
-        // add(updateButton);
-
-        g.setFont(f3);
-        // AA
         g.drawString("Kill AA%", 50, 460);
-        // killAAInput.setBounds(50, 470, 200, 30);
-        // add(killAAInput);
-
-        // Aa
         g.drawString("Kill Aa%", 50, 530);
-        // killAaInput.setBounds(50, 540, 200, 30);
-        // add(killAaInput);
-
-        // aa
         g.drawString("Kill aa%", 50, 600);
-        // killaaInput.setBounds(50, 610, 200, 30);
-        // add(killaaInput);
-
-        // // nat select button
-        // killButton.setBounds(50, 650, 200, 30);
-        // killButton.setFont(f3);
-        // add(killButton);
 
         g.setFont(f2);
         g.drawString("p^2 + 2pq + q^2 = 1", 40, 730);
@@ -516,30 +425,17 @@ public class Screen extends JPanel implements ActionListener {
         boolean pOff = false;
         boolean qOff = false;
         if (Math.abs(pSlider.getValue() / 100.0 - P) > 0.05) {
-            System.out.println("slider OFF");
 
             pInput.setText("" + (pSlider.getValue() / 100.0));
-            // P = pSlider.getValue() / 100.0;
-            // pOff = true;
-
-            // System.out.println(P + "................");
-            // System.out.println(pSlider.getValue() / 100.0);
-            // System.out.println(pInput.getText());
-        } 
+        }
         if (Double.valueOf(pInput.getText()) != P) {
             pSlider.setValue((int) (Double.valueOf(pInput.getText()) * 100.0));
             P = Double.valueOf(pInput.getText());
             pOff = true;
-
-            System.out.println(P);
-            System.out.println(pSlider.getValue() / 100.0);
-            System.out.println(pInput.getText());
-        } 
+        }
         if (Math.abs(qSlider.getValue() / 100.0 - Q) > 0.05) {
             qInput.setText("" + (qSlider.getValue() / 100.0));
-            // Q = qSlider.getValue() / 100.0;
-            // qOff = true;
-        } 
+        }
         if (Double.valueOf(qInput.getText()) != Q) {
             qSlider.setValue((int) (Double.valueOf(qInput.getText()) * 100.0));
             Q = Double.valueOf(qInput.getText());
@@ -547,14 +443,12 @@ public class Screen extends JPanel implements ActionListener {
         }
 
         if (pOff) { // p is changed
-            // System.out.println("P OFF");
             Q = 1 - P;
             qInput.setText("" + Q);
             qSlider.setValue((int) (Q * 100.0));
             updateAlleles();
             pOff = false;
         } else if (qOff) {
-            // System.out.println("Q OFF");
             P = 1 - Q;
             pInput.setText("" + P);
             pSlider.setValue((int) (P * 100.0));
